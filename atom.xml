@@ -6,7 +6,7 @@
   <link href="http://www.niyanhhhhh.top/atom.xml" rel="self"/>
   
   <link href="http://www.niyanhhhhh.top/"/>
-  <updated>2023-03-16T10:19:40.597Z</updated>
+  <updated>2023-04-10T19:53:49.700Z</updated>
   <id>http://www.niyanhhhhh.top/</id>
   
   <author>
@@ -17,11 +17,39 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>少年不识愁滋味</title>
+    <title>「C语言笔记」杂项</title>
+    <link href="http://www.niyanhhhhh.top/2023/04/11/%E3%80%8CC%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E3%80%8D%E6%9D%82%E9%A1%B9/"/>
+    <id>http://www.niyanhhhhh.top/2023/04/11/%E3%80%8CC%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E3%80%8D%E6%9D%82%E9%A1%B9/</id>
+    <published>2023-04-10T18:39:26.000Z</published>
+    <updated>2023-04-10T19:53:49.700Z</updated>
+    
+    <content type="html"><![CDATA[<p><a href="/clearning/" title="目录">目录</a></p><p>创建日期：2023-04-11 02:39:26</p><blockquote><p><em>这里记录着一些C语言写程序过程中容易忘记的东西。</em></p></blockquote><p>持续更新中…</p><h3 id="关于时间"><a href="#关于时间" class="headerlink" title="关于时间"></a>关于时间</h3><h4 id="使用-lt-sys-time-h-gt-和gettimeofday-struct-timeval-void"><a href="#使用-lt-sys-time-h-gt-和gettimeofday-struct-timeval-void" class="headerlink" title="使用&lt;sys/time.h&gt;和gettimeofday(struct timeval*, void *)"></a>使用&lt;sys/time.h&gt;和gettimeofday(struct timeval*, void *)</h4><p>返回自1970年1月1日UTC时间00:00:00起经过的时间，第一个变量为传入时间的指针，结构为</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __USE_TIME_BITS64</span></span><br><span class="line">  <span class="type">__time64_t</span> tv_sec;<span class="comment">/* Seconds.  */</span></span><br><span class="line">  <span class="type">__suseconds64_t</span> tv_usec;<span class="comment">/* Microseconds.  */</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">  <span class="type">__time_t</span> tv_sec;<span class="comment">/* Seconds.  */</span></span><br><span class="line">  <span class="type">__suseconds_t</span> tv_usec;<span class="comment">/* Microseconds.  */</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure><h4 id="使用-lt-time-h-gt-和clock-void"><a href="#使用-lt-time-h-gt-和clock-void" class="headerlink" title="使用&lt;time.h&gt;和clock(void)"></a>使用&lt;time.h&gt;和clock(void)</h4><p>返回自程序开始执行以来的时钟滴答数。如果将其除以常数CLOCKS_PER_SEC，将获得程序在CPU中已运行多长时间（以秒为单位）。</p><h4 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h4><p>以1到1000,000,000求和为例</p><figure class="highlight c"><figcaption><span>tictoc.h</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> HEADER_FILE_TICTOC</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> HEADER_FILE_TICTOC</span></span><br><span class="line"></span><br><span class="line"><span class="type">clock_t</span> __clock_begin;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> __<span class="title">time_begin</span>, __<span class="title">time_end</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> tic __clock_begin=clock()</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> toc <span class="keyword">if</span> (__clock_begin == -1) printf(<span class="string">&quot;toc error!\n&quot;</span>); \</span></span><br><span class="line"><span class="meta">                               <span class="keyword">else</span> printf(<span class="string">&quot;clock time used: %.3fms\n&quot;</span>, (float) (clock() - __clock_begin)/CLOCKS_PER_SEC*1000); __clock_begin=-1</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> timetic gettimeofday(&amp;__time_begin, 0);</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> timetoc gettimeofday(&amp;__time_end, 0); printf(<span class="string">&quot;real time used: %.3fms\n&quot;</span>, 1000*((__time_end.tv_sec - __time_begin.tv_sec) + (__time_end.tv_usec - __time_begin.tv_usec)*1e-6))</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure><figure class="highlight c"><figcaption><span>gettime.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;tictoc.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span> <span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// Start measuring time</span></span><br><span class="line">    tic;</span><br><span class="line">    timetic;</span><br><span class="line">    </span><br><span class="line">    <span class="type">long</span> <span class="type">int</span> n = <span class="number">1000</span>*<span class="number">1000</span>*<span class="number">1000</span>;</span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;n; sum += ++i);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Result: %lld\n&quot;</span>, sum);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Stop measuring time and calculate the elapsed time</span></span><br><span class="line">    toc;</span><br><span class="line">    timetoc;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;a href=&quot;/clearning/&quot; title=&quot;目录&quot;&gt;目录&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;创建日期：2023-04-11 02:39:26&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;这里记录着一些C语言写程序过程中容易忘记的东西。&lt;/em&gt;&lt;/p&gt;
+&lt;/block</summary>
+      
+    
+    
+    
+    
+    <category term="C语言" scheme="http://www.niyanhhhhh.top/tags/C%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="Clearning" scheme="http://www.niyanhhhhh.top/tags/Clearning/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>书博山道中壁</title>
     <link href="http://www.niyanhhhhh.top/2023/03/16/%E5%B0%91%E5%B9%B4%E4%B8%8D%E8%AF%86%E6%84%81%E6%BB%8B%E5%91%B3/"/>
     <id>http://www.niyanhhhhh.top/2023/03/16/%E5%B0%91%E5%B9%B4%E4%B8%8D%E8%AF%86%E6%84%81%E6%BB%8B%E5%91%B3/</id>
     <published>2023-03-16T10:05:36.000Z</published>
-    <updated>2023-03-16T10:19:40.597Z</updated>
+    <updated>2023-04-09T18:33:10.761Z</updated>
     
     <content type="html"><![CDATA[<h3 id="丑奴儿-·-书博山道中壁"><a href="#丑奴儿-·-书博山道中壁" class="headerlink" title="丑奴儿 · 书博山道中壁"></a>丑奴儿 · 书博山道中壁</h3><p><strong>辛弃疾</strong>「宋代」</p><hr><p>少年不识愁滋味，爱上层楼。爱上层楼，为赋新词强说愁。</p><p>而今尽识愁滋味，欲说还休。欲说还休，却道：天凉好个秋！</p>]]></content>
     
@@ -35,7 +63,7 @@
     
     
     
-    <category term="poem" scheme="http://www.niyanhhhhh.top/tags/poem/"/>
+    <category term="诗词" scheme="http://www.niyanhhhhh.top/tags/%E8%AF%97%E8%AF%8D/"/>
     
   </entry>
   
