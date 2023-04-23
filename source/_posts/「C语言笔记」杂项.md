@@ -8,11 +8,10 @@ date: 2023-04-11 02:39:26
 
 <a href="/clearning/" title="目录">目录</a>
 
-创建日期：2023-04-11 02:39:26
-
 > *这里记录着一些C语言写程序过程中容易忘记的东西。*
 
 持续更新中...
+最后更新时间: 2023-4-23
 
 ### 关于时间
 
@@ -83,3 +82,24 @@ int main () {
     return 0;
 }
 {% endcodeblock %}
+
+### 函数重载
+
+C语言本身没有函数重载，一种简单的实现办法如下
+
+```c
+#define GET_MACRO(_1,_2,_3,NAME,...) NAME
+#define FOO(...) GET_MACRO(__VA_ARGS__, FOO3, FOO2, FOO1)(__VA_ARGS__)
+
+int FOO1(int arg1);
+int FOO2(int arg1, int arg2);
+int FOO3(int arg1, int arg2, int arg3);
+```
+
+宏替换的结果为
+```
+FOO(1) => FOO1(1)
+FOO(1,2) => FOO2(1,2)
+FOO(1,2,3) => FOO3(1,2,3)
+```
+
